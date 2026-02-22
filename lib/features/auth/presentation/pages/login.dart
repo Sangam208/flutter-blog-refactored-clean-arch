@@ -1,9 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:my_app/features/auth/presentation/widgets/auth_button.dart';
+import 'package:my_app/features/auth/presentation/widgets/auth_field.dart';
 import 'package:my_app/home.dart';
-import 'package:my_app/signup.dart';
+import 'package:my_app/features/auth/presentation/pages/signup.dart';
 
 class Login extends StatefulWidget {
+  static route() => MaterialPageRoute(
+        builder: (context) => const Login(),
+      );
   const Login({super.key});
 
   @override
@@ -14,9 +19,7 @@ class _LoginState extends State<Login> {
   final _loginkey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
   bool _isHovered = false;
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -63,12 +66,6 @@ class _LoginState extends State<Login> {
     }
   }
 
-  OutlineInputBorder customBorder() {
-    return OutlineInputBorder(
-      borderSide: BorderSide(color: Color.fromRGBO(226, 251, 116, 0.694)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -105,99 +102,42 @@ class _LoginState extends State<Login> {
                       child: Column(
                         children: [
                           // Email
-                          TextFormField(
-                            controller: _emailController,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Theme.of(context).primaryColor,
+                          AuthField(
                               hintText: 'Email',
-                              border: customBorder(),
-                              enabledBorder: customBorder(),
-                              focusedBorder: customBorder(),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
-                              }
-                              return null;
-                            },
-                          ),
+                              fieldController: _emailController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your email';
+                                }
+                                return null;
+                              }),
                           SizedBox(height: 16),
 
                           // Password
-                          TextFormField(
-                            controller: _passwordController,
-                            obscureText: !_isPasswordVisible,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Theme.of(context).primaryColor,
+                          AuthField(
+                              isObscureText: true,
                               hintText: 'Password',
-                              border: customBorder(),
-                              enabledBorder: customBorder(),
-                              focusedBorder: customBorder(),
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _isPasswordVisible = !_isPasswordVisible;
-                                  });
-                                },
-                                icon: Icon(_isPasswordVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off),
-                              ),
-                              suffixIconColor: Colors.black54,
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
-                              }
-                              return null;
-                            },
-                          ),
+                              fieldController: _passwordController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your password';
+                                }
+                                return null;
+                              }),
                           SizedBox(height: 20),
 
-                          // Sign Up Button
-                          ElevatedButton(
-                            onPressed: _isLoading
-                                ? null
-                                : () async {
-                                    setState(() {
-                                      _isLoading = true;
-                                    });
-                                    await loginWithEmailAndPassword();
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                  },
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              padding: EdgeInsets.symmetric(vertical: 13),
-                              minimumSize: Size(double.infinity, 50),
-                              backgroundColor:
-                                  const Color.fromARGB(255, 15, 117, 145),
-                            ),
-                            child: _isLoading
-                                ? CircularProgressIndicator(
-                                    color: Colors.white,
-                                  )
-                                : Text(
-                                    'Log In',
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                  ),
+                          // Log In Button
+                          AuthButton(
+                            buttonText: 'Log In',
+                            onPressed: () {},
                           ),
 
                           SizedBox(height: 10),
 
-                          // Log In Navigation
+                          // Sign Up Navigation
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context)
-                                  .pushReplacement(MaterialPageRoute(builder: (
-                                context,
-                              ) {
-                                return Signup();
-                              }));
+                              Navigator.push(context, Signup.route());
                             },
                             style: TextButton.styleFrom(
                               padding:

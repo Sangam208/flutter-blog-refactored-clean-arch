@@ -1,17 +1,27 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:device_preview/device_preview.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:my_app/create_post.dart';
-// import 'package:my_app/firebase_options.dart';
-import 'package:my_app/home.dart';
-import 'package:my_app/login.dart';
+import 'package:my_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:my_app/features/auth/presentation/pages/login.dart';
+import 'package:my_app/init_dependencies.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await dotenv.load(fileName: ".env");
-  runApp(const MyApp());
+  await initDependencies();
+  runApp(DevicePreview(
+    enabled: !kReleaseMode,
+    builder: (context) => MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => serviceLocator<AuthBloc>(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -19,6 +29,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Blog App',
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: Color.fromRGBO(139, 186, 236, 0.698),
@@ -53,24 +66,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                ),
-              );
-            }
-            if (snapshot.data != null) {
-              return const Home();
-            }
-            return const Login();
-          }),
-      routes: {
-        "/upload": (context) => CreatePost(),
-      },
+      home: const Login(),
     );
   }
 }

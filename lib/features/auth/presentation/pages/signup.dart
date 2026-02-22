@@ -1,8 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:my_app/login.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:my_app/features/auth/presentation/widgets/auth_button.dart';
+import 'package:my_app/features/auth/presentation/widgets/auth_field.dart';
+import 'package:my_app/features/auth/presentation/pages/login.dart';
 
 class Signup extends StatefulWidget {
+  static route() => MaterialPageRoute(
+        builder: (context) => const Signup(),
+      );
   const Signup({super.key});
 
   @override
@@ -16,10 +23,7 @@ class _SignupState extends State<Signup> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
-  bool _isPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false;
   bool _isHovered = false;
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -91,12 +95,6 @@ class _SignupState extends State<Signup> {
     }
   }
 
-  OutlineInputBorder customBorder() {
-    return OutlineInputBorder(
-      borderSide: BorderSide(color: Color.fromRGBO(226, 251, 116, 0.694)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -139,117 +137,63 @@ class _SignupState extends State<Signup> {
                         child: Column(
                           children: [
                             // Full Name
-                            TextFormField(
-                              controller: _nameController,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Theme.of(context).primaryColor,
+                            AuthField(
                                 hintText: 'Full Name',
-                                border: customBorder(),
-                                enabledBorder: customBorder(),
-                                focusedBorder: customBorder(),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your full name';
-                                }
-                                return null;
-                              },
-                            ),
+                                fieldController: _nameController,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your full name';
+                                  }
+                                  return null;
+                                }),
                             SizedBox(height: 16),
 
                             // Email
-                            TextFormField(
-                              controller: _emailController,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Theme.of(context).primaryColor,
+                            AuthField(
                                 hintText: 'Email',
-                                border: customBorder(),
-                                enabledBorder: customBorder(),
-                                focusedBorder: customBorder(),
-                              ),
-                              validator: (value) {
-                                String pattern =
-                                    r'^[a-z]+[0-9]*(_?[0-9]+)*(\.[a-z]+[0-9]*(_?[0-9]+)*)*@[a-z0-9-]+\.[a-z]{2,}$';
+                                fieldController: _emailController,
+                                validator: (value) {
+                                  String pattern =
+                                      r'^[a-z]+[0-9]*(_?[0-9]+)*(\.[a-z]+[0-9]*(_?[0-9]+)*)*@[a-z0-9-]+\.[a-z]{2,}$';
 
-                                RegExp regex = RegExp(pattern);
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your email';
-                                }
-                                if (!regex.hasMatch(value)) {
-                                  return 'Please enter a valid email';
-                                }
-                                return null;
-                              },
-                            ),
+                                  RegExp regex = RegExp(pattern);
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your email';
+                                  }
+                                  if (!regex.hasMatch(value)) {
+                                    return 'Please enter a valid email';
+                                  }
+                                  return null;
+                                }),
                             SizedBox(height: 16),
 
                             // Password
-                            TextFormField(
-                              controller: _passwordController,
-                              obscureText: !_isPasswordVisible,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Theme.of(context).primaryColor,
+                            AuthField(
+                                isObscureText: true,
                                 hintText: 'Password',
-                                border: customBorder(),
-                                enabledBorder: customBorder(),
-                                focusedBorder: customBorder(),
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _isPasswordVisible = !_isPasswordVisible;
-                                    });
-                                  },
-                                  icon: Icon(_isPasswordVisible
-                                      ? Icons.visibility
-                                      : Icons.visibility_off),
-                                ),
-                                suffixIconColor: Colors.black54,
-                              ),
-                              validator: (value) {
-                                String pattern =
-                                    r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$%\^&\*\(\)_\+\-\=\[\]\{\};:\",<>./?\\|`~])';
-                                RegExp regex = RegExp(pattern);
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your password';
-                                }
-                                if (_passwordController.text.length < 8) {
-                                  return 'Password must be at least 8 characters long';
-                                }
-                                if (!regex.hasMatch(value)) {
-                                  return 'Password must include uppercase, lowercase, numbers, and special characters';
-                                }
-                                return null;
-                              },
-                            ),
+                                fieldController: _passwordController,
+                                validator: (value) {
+                                  String pattern =
+                                      r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$%\^&\*\(\)_\+\-\=\[\]\{\};:\",<>./?\\|`~])';
+                                  RegExp regex = RegExp(pattern);
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your password';
+                                  }
+                                  if (_passwordController.text.length < 8) {
+                                    return 'Password must be at least 8 characters long';
+                                  }
+                                  if (!regex.hasMatch(value)) {
+                                    return 'Password must include uppercase, lowercase, numbers, and special characters';
+                                  }
+                                  return null;
+                                }),
                             SizedBox(height: 16),
 
                             // Confirm Password
-                            TextFormField(
-                              controller: _confirmPasswordController,
-                              obscureText: !_isConfirmPasswordVisible,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Theme.of(context).primaryColor,
-                                hintText: 'Confirm Password',
-                                border: customBorder(),
-                                enabledBorder: customBorder(),
-                                focusedBorder: customBorder(),
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _isConfirmPasswordVisible =
-                                          !_isConfirmPasswordVisible;
-                                    });
-                                  },
-                                  icon: Icon(_isConfirmPasswordVisible
-                                      ? Icons.visibility
-                                      : Icons.visibility_off),
-                                ),
-                                suffixIconColor: Colors.black54,
-                              ),
+                            AuthField(
+                              isObscureText: true,
+                              fieldController: _confirmPasswordController,
+                              hintText: 'Confirm Password',
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please confirm your password';
@@ -263,38 +207,20 @@ class _SignupState extends State<Signup> {
                             SizedBox(height: 20),
 
                             // Sign Up Button
-                            ElevatedButton(
-                              onPressed: _isLoading
-                                  ? null
-                                  : () async {
-                                      if (_signupkey.currentState?.validate() ??
-                                          false) {
-                                        setState(() {
-                                          _isLoading = true;
-                                        });
-                                        await createUserWithEmailAndPassword();
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                      }
-                                    },
-                              style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                padding: EdgeInsets.symmetric(vertical: 13),
-                                minimumSize: Size(double.infinity, 50),
-                                backgroundColor:
-                                    const Color.fromARGB(255, 46, 151, 49),
-                              ),
-                              child: _isLoading
-                                  ? CircularProgressIndicator(
-                                      color: Colors.white,
-                                    )
-                                  : Text(
-                                      'Sign Up',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium,
-                                    ),
+                            AuthButton(
+                              buttonText: 'Sign Up',
+                              onPressed: () {
+                                if (_signupkey.currentState!.validate()) {
+                                  context.read<AuthBloc>().add(
+                                        AuthSignUp(
+                                          name: _nameController.text.trim(),
+                                          email: _emailController.text.trim(),
+                                          password:
+                                              _passwordController.text.trim(),
+                                        ),
+                                      );
+                                }
+                              },
                             ),
 
                             SizedBox(height: 10),
@@ -309,12 +235,7 @@ class _SignupState extends State<Signup> {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(builder: (
-                                      context,
-                                    ) {
-                                      return Login();
-                                    }));
+                                    Navigator.push(context, Login.route());
                                   },
                                   style: TextButton.styleFrom(
                                     padding: EdgeInsets
