@@ -12,8 +12,10 @@ abstract interface class AuthRepository {
 
   // Log In Method
   Future<Either<Failure, User>> logInWithEmailPassword({
-    required String name,
     required String email,
     required String password,
   });
+
+  // Current User Method
+  Future<Either<Failure, User>> currentUser();
 }

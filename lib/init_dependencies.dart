@@ -3,6 +3,8 @@ import 'package:my_app/core/config/app_config.dart';
 import 'package:my_app/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:my_app/features/auth/data/repositories/auth_repository_implementation.dart';
 import 'package:my_app/features/auth/domain/repositories/auth_repository.dart';
+import 'package:my_app/features/auth/domain/usecases/current_user.dart';
+import 'package:my_app/features/auth/domain/usecases/user_login.dart';
 import 'package:my_app/features/auth/domain/usecases/user_signup.dart';
 import 'package:my_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -21,27 +23,44 @@ Future<void> initDependencies() async {
 }
 
 void _initAuth() {
-  serviceLocator.registerFactory<AuthRemoteDatasource>(
-    () => AuthRemoteDataSourceImplementation(
-      serviceLocator(),
-    ),
-  );
+  // Auth Remote Data Source
+  serviceLocator
+    ..registerFactory<AuthRemoteDatasource>(
+      () => AuthRemoteDataSourceImplementation(
+        serviceLocator(),
+      ),
+    )
 
-  serviceLocator.registerFactory<AuthRepository>(
-    () => AuthRepositoryImplementation(
-      serviceLocator(),
-    ),
-  );
+    // Auth Repository
+    ..registerFactory<AuthRepository>(
+      () => AuthRepositoryImplementation(
+        serviceLocator(),
+      ),
+    )
 
-  serviceLocator.registerFactory(
-    () => UserSignup(
-      serviceLocator(),
-    ),
-  );
+    // Use Cases
+    ..registerFactory(
+      () => UserSignup(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => UserLogin(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => CurrentUser(
+        serviceLocator(),
+      ),
+    )
 
-  serviceLocator.registerLazySingleton(
-    () => AuthBloc(
-      userSignup: serviceLocator(),
-    ),
-  );
+    // Auth Bloc
+    ..registerLazySingleton(
+      () => AuthBloc(
+        userSignup: serviceLocator(),
+        userLogin: serviceLocator(),
+        currentUser: serviceLocator(),
+      ),
+    );
 }
