@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:my_app/core/cubits/app_user/app_user_cubit.dart';
 import 'package:my_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:my_app/features/auth/presentation/pages/login.dart';
 import 'package:my_app/init_dependencies.dart';
@@ -15,6 +16,9 @@ void main() async {
     enabled: !kReleaseMode,
     builder: (context) => MultiBlocProvider(
       providers: [
+        BlocProvider(
+          create: (_) => serviceLocator<AppUserCubit>(),
+        ),
         BlocProvider(
           create: (_) => serviceLocator<AuthBloc>(),
         ),
@@ -78,7 +82,21 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
-      home: const Login(),
+      home: BlocSelector<AppUserCubit, AppUserState, bool>(
+        selector: (state) {
+          return state is AppUserLoggedIn;
+        },
+        builder: (context, isLoggedIn) {
+          if (isLoggedIn) {
+            return Scaffold(
+              body: Center(
+                child: Text('Logged In'),
+              ),
+            );
+          }
+          return const Login();
+        },
+      ),
     );
   }
 }
