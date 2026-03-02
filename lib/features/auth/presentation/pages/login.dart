@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_app/core/common/widgets/loader.dart';
@@ -6,7 +5,6 @@ import 'package:my_app/core/utils/show_toast.dart';
 import 'package:my_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:my_app/features/auth/presentation/widgets/auth_button.dart';
 import 'package:my_app/features/auth/presentation/widgets/auth_field.dart';
-import 'package:my_app/home.dart';
 import 'package:my_app/features/auth/presentation/pages/signup.dart';
 
 class Login extends StatefulWidget {
@@ -30,44 +28,6 @@ class _LoginState extends State<Login> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
-  }
-
-  Future<void> loginWithEmailAndPassword() async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Logged in...',
-                  style: Theme.of(context).textTheme.bodyMedium)),
-        );
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => const Home(),
-          ),
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      String errorMessage = 'Invalid credentials';
-
-      if (e.code == 'invalid-credential') {
-        errorMessage = 'Invalid credentials';
-      } else if (e.code == 'too-many-requests') {
-        errorMessage = 'Too many failed attempts. Try again later.';
-      }
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(errorMessage,
-                  style: Theme.of(context).textTheme.bodyMedium)),
-        );
-      }
-    }
   }
 
   @override

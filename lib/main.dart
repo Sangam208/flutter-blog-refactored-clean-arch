@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:my_app/core/cubits/app_user/app_user_cubit.dart';
 import 'package:my_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:my_app/features/auth/presentation/pages/login.dart';
+import 'package:my_app/features/blog/presentation/pages/add_blog.dart';
 import 'package:my_app/init_dependencies.dart';
 
 void main() async {
@@ -13,7 +14,7 @@ void main() async {
   await dotenv.load(fileName: ".env");
   await initDependencies();
   runApp(DevicePreview(
-    enabled: !kReleaseMode,
+    enabled: kReleaseMode,
     builder: (context) => MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -88,11 +89,7 @@ class _MyAppState extends State<MyApp> {
         },
         builder: (context, isLoggedIn) {
           if (isLoggedIn) {
-            return Scaffold(
-              body: Center(
-                child: Text('Logged In'),
-              ),
-            );
+            return const AddBlog();
           }
           return const Login();
         },

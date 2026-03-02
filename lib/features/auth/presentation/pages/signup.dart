@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_app/core/common/widgets/loader.dart';
@@ -34,67 +33,6 @@ class _SignupState extends State<Signup> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
-  }
-
-  Future<void> createUserWithEmailAndPassword() async {
-    try {
-      final userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
-
-      debugPrint("User created: ${userCredential.user}");
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-            'Signup Successful!',
-            style: Theme.of(context).textTheme.bodyMedium,
-          )),
-        );
-      }
-
-      // Redirect to login screen after a short delay
-      await Future.delayed(Duration(seconds: 2));
-      if (mounted) {
-        Navigator.of(context)
-            .pushReplacement(MaterialPageRoute(builder: (context) => Login()));
-      }
-    } on FirebaseAuthException catch (e) {
-      String errorMessage = "Signup failed. Please try again.";
-
-      if (e.code == 'email-already-in-use') {
-        errorMessage = "User already exists";
-      } else if (e.code == 'network-request-failed') {
-        errorMessage = "Network error, please try again later.";
-      } else {
-        debugPrint('Error Code: ${e.code}');
-        debugPrint('Error Message: ${e.message}');
-      }
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-            errorMessage,
-            style: Theme.of(context).textTheme.bodyMedium,
-          )),
-        );
-      }
-    } catch (e) {
-      debugPrint("Unexpected error: $e");
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-            "Signup failed. Please try again.",
-            style: Theme.of(context).textTheme.bodyMedium,
-          )),
-        );
-      }
-    }
   }
 
   @override
