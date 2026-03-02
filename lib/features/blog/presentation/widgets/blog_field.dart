@@ -20,15 +20,20 @@ class BlogField extends StatelessWidget {
     }
 
     return TextFormField(
+      validator: (value) {
+        return value == null || value.isEmpty ? "$label is missing" : null;
+      },
       maxLines: null,
       controller: fieldController,
       decoration: InputDecoration(
+        errorBorder: customBorder(),
         filled: true,
         fillColor: const Color.fromARGB(255, 198, 198, 198),
-        border: customBorder(),
+        border: customBorder()
+            .copyWith(borderSide: BorderSide(color: Colors.grey.shade700)),
         enabledBorder: customBorder(),
         focusedBorder: customBorder()
-            .copyWith(borderSide: BorderSide(color: Colors.grey.shade300)),
+            .copyWith(borderSide: BorderSide(color: Colors.grey.shade700)),
         labelText: label,
       ),
     );

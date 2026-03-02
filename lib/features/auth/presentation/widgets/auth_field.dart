@@ -24,6 +24,7 @@ class AuthField extends StatelessWidget {
       obscureText: isObscureText,
       controller: fieldController,
       decoration: InputDecoration(
+        errorBorder: customBorder(),
         filled: true,
         fillColor: Theme.of(context).primaryColor,
         hintText: hintText,
