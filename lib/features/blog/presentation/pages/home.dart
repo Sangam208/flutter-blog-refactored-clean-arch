@@ -41,17 +41,60 @@ class Home extends StatelessWidget {
           color: const Color.fromARGB(255, 145, 51, 51),
         ),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
         child: SizedBox(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(15.0),
+          child: GridView.builder(
+            itemCount: 5,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              mainAxisExtent: 110,
+              crossAxisCount: 2,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 4,
+            ),
             itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text('Blog ${index + 1}'),
+              return Card(
+                color: const Color.fromARGB(255, 162, 211, 251),
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    spacing: 8.0,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: double.infinity,
+                        width: 70,
+                        child: const Placeholder(),
+                      ),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Title',
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            Text(
+                              'Content',
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: true,
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               );
             },
-            itemCount: 8,
           ),
         ),
       ),

@@ -7,7 +7,6 @@ import 'package:my_app/core/cubits/app_user/app_user_cubit.dart';
 import 'package:my_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:my_app/features/auth/presentation/pages/login.dart';
 import 'package:my_app/features/blog/presentation/bloc/blog_bloc.dart';
-import 'package:my_app/features/blog/presentation/pages/add_blog.dart';
 import 'package:my_app/features/blog/presentation/pages/home.dart';
 import 'package:my_app/init_dependencies.dart';
 
@@ -15,23 +14,25 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await initDependencies();
-  runApp(DevicePreview(
-    enabled: kReleaseMode,
-    builder: (context) => MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (_) => serviceLocator<AppUserCubit>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<AuthBloc>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<BlogBloc>(),
-        ),
-      ],
-      child: const MyApp(),
+  runApp(
+    DevicePreview(
+      enabled: kReleaseMode,
+      builder: (context) => MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) => serviceLocator<AppUserCubit>(),
+          ),
+          BlocProvider(
+            create: (_) => serviceLocator<AuthBloc>(),
+          ),
+          BlocProvider(
+            create: (_) => serviceLocator<BlogBloc>(),
+          ),
+        ],
+        child: const MyApp(),
+      ),
     ),
-  ));
+  );
 }
 
 class MyApp extends StatefulWidget {

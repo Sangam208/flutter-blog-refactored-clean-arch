@@ -34,7 +34,7 @@ class BlogRepositoryImplementation implements BlogRepository {
       final imageUrl = await _blogRemoteDatasource.uploadBlogImage(
           image: image, blog: blogModel);
 
-      blogModel.copyWith(imageUrl: imageUrl);
+      blogModel = blogModel.copyWith(imageUrl: imageUrl);
 
       final blog = await _blogRemoteDatasource.uploadBlog(blogModel);
 

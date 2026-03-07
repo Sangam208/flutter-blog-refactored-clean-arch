@@ -5,6 +5,7 @@ import 'package:my_app/core/common/widgets/loader.dart';
 import 'package:my_app/core/cubits/app_user/app_user_cubit.dart';
 import 'package:my_app/core/utils/show_toast.dart';
 import 'package:my_app/features/blog/presentation/bloc/blog_bloc.dart';
+import 'package:my_app/features/blog/presentation/pages/home.dart';
 import 'package:my_app/features/blog/presentation/widgets/blog_field.dart';
 import 'package:my_app/features/blog/presentation/widgets/file_container.dart';
 
@@ -75,11 +76,13 @@ class _AddBlogState extends State<AddBlog> {
           ],
         ),
         body: BlocConsumer<BlogBloc, BlogState>(
-          listener: (context, state) {
+          listener: (context, state) async {
             if (state is BlogFailure) {
               showToast(state.message);
             } else if (state is BlogSuccess) {
+              await Future.delayed(const Duration(seconds: 2));
               Navigator.pop(context);
+              showToast('Added');
             }
           },
           builder: (context, state) {
@@ -120,10 +123,7 @@ class _AddBlogState extends State<AddBlog> {
 
                           /// Save Button
                           ElevatedButton(
-                            onPressed: () {
-                              uploadBlog();
-                              Navigator.pop(context);
-                            },
+                            onPressed: uploadBlog,
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
