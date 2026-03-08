@@ -11,4 +11,5 @@ abstract interface class BlogRepository {
     required String content,
     required String userId,
   });
+  Future<Either<Failure, List<Blog>>> fetchBlogs();
 }

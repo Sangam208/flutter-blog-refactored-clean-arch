@@ -9,9 +9,12 @@ final class BlogUploadRequested extends BlogEvent {
   final String content;
   final File image;
 
-  BlogUploadRequested(
-      {required this.userId,
-      required this.title,
-      required this.content,
-      required this.image});
+  BlogUploadRequested({
+    required this.userId,
+    required this.title,
+    required this.content,
+    required this.image,
+  });
 }
+
+final class BlogFetchRequested extends BlogEvent {}

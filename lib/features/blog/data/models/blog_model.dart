@@ -8,6 +8,7 @@ class BlogModel extends Blog {
     required super.content,
     required super.imageUrl,
     required super.updatedAt,
+    super.username,
   });
 
   Map<String, dynamic> toJson() {
@@ -41,6 +42,7 @@ class BlogModel extends Blog {
     String? content,
     String? imageUrl,
     DateTime? updatedAt,
+    String? username,
   }) {
     return BlogModel(
       id: id ?? this.id,
@@ -49,6 +51,7 @@ class BlogModel extends Blog {
       content: content ?? this.content,
       imageUrl: imageUrl ?? this.imageUrl,
       updatedAt: updatedAt ?? this.updatedAt,
+      username: username ?? this.username,
     );
   }
 }
