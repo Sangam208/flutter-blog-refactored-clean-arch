@@ -21,7 +21,7 @@ class BlogCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 3,
+      elevation: 4,
       color: index % 3 == 0
           ? AppPalette.appColor1
           : index % 3 == 1

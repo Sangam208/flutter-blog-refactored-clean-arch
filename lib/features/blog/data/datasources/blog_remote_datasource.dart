@@ -48,8 +48,10 @@ class BlogRemoteDatasourceImplementation implements BlogRemoteDatasource {
   @override
   Future<List<BlogModel>> fetchBlogs() async {
     try {
-      final blogs =
-          await _supabaseClient.from('blogs').select('*, profiles (name)');
+      final blogs = await _supabaseClient
+          .from('blogs')
+          .select('*, profiles (name)')
+          .order('updated_at', ascending: false);
       return blogs
           .map(
             (blog) => BlogModel.fromJson(blog).copyWith(

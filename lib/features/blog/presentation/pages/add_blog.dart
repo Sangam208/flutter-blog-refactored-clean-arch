@@ -79,69 +79,69 @@ class _AddBlogState extends State<AddBlog> {
             if (state is BlogFailure) {
               showToast(state.message);
             } else if (state is BlogSuccess) {
+              context.read<BlogBloc>().add(BlogFetchRequested());
               await Future.delayed(const Duration(seconds: 2));
               Navigator.pop(context);
               showToast('Added');
             }
           },
           builder: (context, state) {
-            return state is BlogLoading
-                ? const Loader()
-                : SingleChildScrollView(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Form(
-                      key: formKey,
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 250,
-                            child: FileContainer(
-                              file: selectedImage,
-                              onFilePicked: (file) {
-                                setState(() {
-                                  selectedImage = file;
-                                });
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: 15),
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(15.0),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 250,
+                      child: FileContainer(
+                        file: selectedImage,
+                        onFilePicked: (file) {
+                          setState(() {
+                            selectedImage = file;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 15),
 
-                          /// Title
-                          BlogField(
-                            fieldController: _titleController,
-                            label: 'Title',
-                          ),
-                          const SizedBox(height: 12),
+                    /// Title
+                    BlogField(
+                      fieldController: _titleController,
+                      label: 'Title',
+                    ),
+                    const SizedBox(height: 12),
 
-                          /// Content
-                          BlogField(
-                            fieldController: _contentController,
-                            label: 'Content',
-                          ),
-                          const SizedBox(height: 20),
+                    /// Content
+                    BlogField(
+                      fieldController: _contentController,
+                      label: 'Content',
+                    ),
+                    const SizedBox(height: 20),
 
-                          /// Save Button
-                          ElevatedButton(
-                            onPressed: uploadBlog,
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(vertical: 13),
-                              minimumSize: const Size(double.infinity, 50),
-                              backgroundColor:
-                                  const Color.fromARGB(255, 34, 34, 34),
-                            ),
-                            child: Text(
+                    /// Save Button
+                    ElevatedButton(
+                      onPressed: uploadBlog,
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 13),
+                        minimumSize: const Size(double.infinity, 50),
+                        backgroundColor: const Color.fromARGB(255, 34, 34, 34),
+                      ),
+                      child: state is BlogLoading
+                          ? const Loader()
+                          : Text(
                               'Add',
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
-                          ),
-                        ],
-                      ),
                     ),
-                  );
+                  ],
+                ),
+              ),
+            );
           },
         ),
       ),
