@@ -70,45 +70,53 @@ class _HomeState extends State<Home> {
           }
 
           if (state is BlogDisplaySuccess) {
-            return Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: ListView.builder(
-                itemCount: state.blogs.length,
-                itemBuilder: (context, index) {
-                  final blog = state.blogs[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5.0),
-                    child: SizedBox(
-                      height: 130,
-                      width: double.infinity,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BlogView(
+            return state.blogs.isEmpty
+                ? Center(
+                    child: Text(
+                      'No Blogs To Display',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: ListView.builder(
+                      itemCount: state.blogs.length,
+                      itemBuilder: (context, index) {
+                        final blog = state.blogs[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5.0),
+                          child: SizedBox(
+                            height: 130,
+                            width: double.infinity,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BlogView(
+                                      title: blog.title,
+                                      content: blog.content,
+                                      imageUrl: blog.imageUrl,
+                                      username: blog.username ?? 'Unknown',
+                                      updatedAt:
+                                          formatDateByddMMYYYY(blog.updatedAt),
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: BlogCard(
+                                username: blog.username ?? 'Unknown',
+                                imageUrl: blog.imageUrl,
                                 title: blog.title,
                                 content: blog.content,
-                                imageUrl: blog.imageUrl,
-                                username: blog.username!,
-                                updatedAt: formatDateByddMMYYYY(blog.updatedAt),
+                                index: index,
                               ),
                             ),
-                          );
-                        },
-                        child: BlogCard(
-                          username: blog.username!,
-                          imageUrl: blog.imageUrl,
-                          title: blog.title,
-                          content: blog.content,
-                          index: index,
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     ),
                   );
-                },
-              ),
-            );
           }
           return SizedBox.shrink();
         },

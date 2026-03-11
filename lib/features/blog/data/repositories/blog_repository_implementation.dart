@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:my_app/core/network/connection_checker.dart';
+import 'package:my_app/features/blog/data/datasources/blog_local_datasource.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:fpdart/fpdart.dart';
@@ -11,7 +13,14 @@ import 'package:my_app/features/blog/domain/repositories/blog_repository.dart';
 
 class BlogRepositoryImplementation implements BlogRepository {
   final BlogRemoteDatasource _blogRemoteDatasource;
-  BlogRepositoryImplementation(this._blogRemoteDatasource);
+  final BlogLocalDatasource _blogLocalDatasource;
+  final ConnectionChecker _connectionChecker;
+
+  BlogRepositoryImplementation(
+    this._blogRemoteDatasource,
+    this._blogLocalDatasource,
+    this._connectionChecker,
+  );
 
   // Add Blog Implementation
   @override
@@ -22,6 +31,10 @@ class BlogRepositoryImplementation implements BlogRepository {
     required String userId,
   }) async {
     try {
+      if (!await _connectionChecker.isConnected) {
+        return left(Failure('No Internet Connection'));
+      }
+
       BlogModel blogModel = BlogModel(
         id: const Uuid().v1(),
         userId: userId,
@@ -47,7 +60,16 @@ class BlogRepositoryImplementation implements BlogRepository {
   @override
   Future<Either<Failure, List<Blog>>> fetchBlogs() async {
     try {
+      // Fetch from Hive if Internet Connection Missing
+      if (!await _connectionChecker.isConnected) {
+        final blogs = _blogLocalDatasource.loadBlogs();
+        if (blogs.isEmpty) return left(Failure('No blogs found'));
+        return right(blogs);
+      }
+
+      // Fetch from Supabase if Internet Connection Exists
       final blogs = await _blogRemoteDatasource.fetchBlogs();
+      _blogLocalDatasource.uploadLocalBlogs(blogs: blogs);
       return right(blogs);
     } on ServerExceptions catch (e) {
       return left(Failure(e.message));

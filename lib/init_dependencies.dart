@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:my_app/core/config/app_config.dart';
 import 'package:my_app/core/cubits/app_user/app_user_cubit.dart';
@@ -10,12 +11,14 @@ import 'package:my_app/features/auth/domain/usecases/current_user.dart';
 import 'package:my_app/features/auth/domain/usecases/user_login.dart';
 import 'package:my_app/features/auth/domain/usecases/user_signup.dart';
 import 'package:my_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:my_app/features/blog/data/datasources/blog_local_datasource.dart';
 import 'package:my_app/features/blog/data/datasources/blog_remote_datasource.dart';
 import 'package:my_app/features/blog/data/repositories/blog_repository_implementation.dart';
 import 'package:my_app/features/blog/domain/repositories/blog_repository.dart';
 import 'package:my_app/features/blog/domain/usecases/fetch_blogs.dart';
 import 'package:my_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:my_app/features/blog/presentation/bloc/blog_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final serviceLocator = GetIt.instance;
@@ -27,9 +30,18 @@ Future<void> initDependencies() async {
     anonKey: AppConfig.anonKey,
   );
 
+  // Hive Initialization
+  Hive.init((await getApplicationDocumentsDirectory()).path);
+  final blogsBox = await Hive.openBox('blogs');
+
   // Supabase Registration
   serviceLocator.registerLazySingleton(
     () => supabase.client,
+  );
+
+  // Hive Registration
+  serviceLocator.registerLazySingleton(
+    () => blogsBox,
   );
 
   // core stuff
@@ -108,9 +120,18 @@ void _initBlog() {
       ),
     )
 
+    // Blog Local Data Source (H I V E)
+    ..registerFactory<BlogLocalDatasource>(
+      () => BlogLocalDatasourceImplementation(
+        serviceLocator(),
+      ),
+    )
+
     // Blog Repository
     ..registerFactory<BlogRepository>(
       () => BlogRepositoryImplementation(
+        serviceLocator(),
+        serviceLocator(),
         serviceLocator(),
       ),
     )
