@@ -81,6 +81,7 @@ class _AddBlogState extends State<AddBlog> {
             } else if (state is BlogSuccess) {
               context.read<BlogBloc>().add(BlogFetchRequested());
               await Future.delayed(const Duration(seconds: 2));
+              if (!context.mounted) return;
               Navigator.pop(context);
               showToast('Added');
             }

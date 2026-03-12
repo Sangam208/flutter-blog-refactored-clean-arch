@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_app/core/common/widgets/app_drawer.dart';
 import 'package:my_app/core/common/widgets/loader.dart';
 import 'package:my_app/core/utils/format_date.dart';
 import 'package:my_app/core/utils/show_toast.dart';
@@ -9,6 +10,9 @@ import 'package:my_app/features/blog/presentation/pages/blog_view.dart';
 import 'package:my_app/features/blog/presentation/widgets/blog_card.dart';
 
 class Home extends StatefulWidget {
+  static route() => MaterialPageRoute(
+        builder: (context) => const Home(),
+      );
   const Home({super.key});
 
   @override
@@ -121,42 +125,7 @@ class _HomeState extends State<Home> {
           return SizedBox.shrink();
         },
       ),
-      endDrawer: Drawer(
-        width: MediaQuery.of(context).size.width * 0.6, // 60% width
-        child: Column(
-          children: [
-            SizedBox(
-              height: 100,
-              child: DrawerHeader(
-                decoration: BoxDecoration(color: Colors.redAccent),
-                child: Center(
-                  child: Text(
-                    "Menu",
-                    style: TextStyle(fontSize: 24, color: Colors.white),
-                  ),
-                ),
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text("Profile"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("Settings"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text("Logout"),
-              onTap: () async {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
+      endDrawer: AppDrawer(),
     );
   }
 }

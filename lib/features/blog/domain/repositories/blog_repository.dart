@@ -12,4 +12,6 @@ abstract interface class BlogRepository {
     required String userId,
   });
   Future<Either<Failure, List<Blog>>> fetchBlogs();
+
+  Future<void> clearLocalBlogs();
 }

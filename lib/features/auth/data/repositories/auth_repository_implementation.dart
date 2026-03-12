@@ -8,16 +8,16 @@ import 'package:my_app/features/auth/data/models/user_model.dart';
 import 'package:my_app/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImplementation implements AuthRepository {
-  final AuthRemoteDatasource authRemoteDatasource;
-  final ConnectionChecker connectionChecker;
+  final AuthRemoteDatasource _authRemoteDatasource;
+  final ConnectionChecker _connectionChecker;
   AuthRepositoryImplementation(
-      this.authRemoteDatasource, this.connectionChecker);
+      this._authRemoteDatasource, this._connectionChecker);
 
   @override
   Future<Either<Failure, User>> currentUser() async {
     try {
-      if (!await (connectionChecker.isConnected)) {
-        final session = authRemoteDatasource.currentUserSession;
+      if (!await (_connectionChecker.isConnected)) {
+        final session = _authRemoteDatasource.currentUserSession;
         if (session == null) {
           return left(Failure('User not logged in!!'));
         }
@@ -29,7 +29,7 @@ class AuthRepositoryImplementation implements AuthRepository {
           ),
         );
       }
-      final user = await authRemoteDatasource.getCurrentUserData();
+      final user = await _authRemoteDatasource.getCurrentUserData();
       if (user == null) {
         return left(Failure('User not logged in!!'));
       }
@@ -42,7 +42,7 @@ class AuthRepositoryImplementation implements AuthRepository {
   @override
   Future<Either<Failure, User>> logInWithEmailPassword(
       {required String email, required String password}) async {
-    return _getUser(() async => await authRemoteDatasource
+    return _getUser(() async => await _authRemoteDatasource
         .logInWithEmailPassword(email: email, password: password));
   }
 
@@ -52,19 +52,28 @@ class AuthRepositoryImplementation implements AuthRepository {
       required String email,
       required String password}) async {
     return _getUser(
-      () async => await authRemoteDatasource.signUpWithEmailPassword(
+      () async => await _authRemoteDatasource.signUpWithEmailPassword(
           name: name, email: email, password: password),
     );
   }
 
   Future<Either<Failure, User>> _getUser(Future<User> Function() fn) async {
     try {
-      if (!await (connectionChecker.isConnected)) {
-        return left(Failure('No Internet Connection'));
-      }
-
       final user = await fn();
       return right(user);
+    } on ServerExceptions catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> logOut() async {
+    try {
+      if (!await (_connectionChecker.isConnected)) {
+        return left(Failure('No Internet Connection'));
+      }
+      await _authRemoteDatasource.logOut();
+      return right(null);
     } on ServerExceptions catch (e) {
       return left(Failure(e.message));
     }

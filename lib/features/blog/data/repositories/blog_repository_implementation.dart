@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:my_app/core/network/connection_checker.dart';
 import 'package:my_app/features/blog/data/datasources/blog_local_datasource.dart';
 import 'package:uuid/uuid.dart';
-
 import 'package:fpdart/fpdart.dart';
 import 'package:my_app/core/error/exceptions.dart';
 import 'package:my_app/core/error/failure.dart';
@@ -74,5 +73,10 @@ class BlogRepositoryImplementation implements BlogRepository {
     } on ServerExceptions catch (e) {
       return left(Failure(e.message));
     }
+  }
+
+  @override
+  Future<void> clearLocalBlogs() async {
+    await _blogLocalDatasource.clearLocalBlogs();
   }
 }

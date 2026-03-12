@@ -37,40 +37,42 @@ class _LoginState extends State<Login> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Center(
-            child: Card(
-              color: Theme.of(context).colorScheme.primary,
-              elevation: 8,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Container(
-                width: containerWidth,
-                padding: const EdgeInsets.all(14.0), // Uniform padding
-                child: Column(
-                  // Change from fixed height to flexible height
-                  mainAxisSize: MainAxisSize
-                      .min, // Allows it to shrink or expand based on content
-                  children: <Widget>[
-                    Center(
-                      child: Text(
-                        'Log In',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    BlocConsumer<AuthBloc, AuthState>(
-                      listener: (context, state) {
-                        if (state is AuthFailure) {
-                          showToast(state.message);
-                        }
-                      },
-                      builder: (context, state) {
-                        return state is AuthLoading
-                            ? Loader()
-                            : Form(
+        body: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is AuthFailure) {
+              showToast(state.message);
+            } else if (state is AuthSuccess) {
+              if (!context.mounted) return;
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            }
+          },
+          builder: (context, state) {
+            return state is AuthLoading
+                ? Loader()
+                : Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Center(
+                      child: Card(
+                        color: Theme.of(context).colorScheme.primary,
+                        elevation: 8,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Container(
+                          width: containerWidth,
+                          padding: const EdgeInsets.all(14.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Center(
+                                child: Text(
+                                  'Log In',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              Form(
                                 key: _loginkey,
                                 child: Column(
                                   children: [
@@ -181,14 +183,14 @@ class _LoginState extends State<Login> {
                                             10), // Add some space at the bottom for better balance
                                   ],
                                 ),
-                              );
-                      },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+                  );
+          },
         ),
       ),
     );

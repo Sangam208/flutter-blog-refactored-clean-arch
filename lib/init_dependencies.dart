@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:my_app/core/config/app_config.dart';
 import 'package:my_app/core/cubits/app_user/app_user_cubit.dart';
@@ -9,12 +9,14 @@ import 'package:my_app/features/auth/data/repositories/auth_repository_implement
 import 'package:my_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:my_app/features/auth/domain/usecases/current_user.dart';
 import 'package:my_app/features/auth/domain/usecases/user_login.dart';
+import 'package:my_app/features/auth/domain/usecases/user_logout.dart';
 import 'package:my_app/features/auth/domain/usecases/user_signup.dart';
 import 'package:my_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:my_app/features/blog/data/datasources/blog_local_datasource.dart';
 import 'package:my_app/features/blog/data/datasources/blog_remote_datasource.dart';
 import 'package:my_app/features/blog/data/repositories/blog_repository_implementation.dart';
 import 'package:my_app/features/blog/domain/repositories/blog_repository.dart';
+import 'package:my_app/features/blog/domain/usecases/clear_local_blogs.dart';
 import 'package:my_app/features/blog/domain/usecases/fetch_blogs.dart';
 import 'package:my_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:my_app/features/blog/presentation/bloc/blog_bloc.dart';
@@ -99,6 +101,11 @@ void _initAuth() {
         serviceLocator(),
       ),
     )
+    ..registerLazySingleton(
+      () => UserLogout(
+        serviceLocator(),
+      ),
+    )
 
     // Auth Bloc
     ..registerLazySingleton(
@@ -107,6 +114,8 @@ void _initAuth() {
         userLogin: serviceLocator(),
         currentUser: serviceLocator(),
         appUserCubit: serviceLocator(),
+        userLogout: serviceLocator(),
+        connectionChecker: serviceLocator(),
       ),
     );
 }
@@ -136,6 +145,8 @@ void _initBlog() {
       ),
     )
 
+    // Usecases
+
     // Blog Upload Usecase
     ..registerFactory(
       () => UploadBlog(
@@ -149,12 +160,19 @@ void _initBlog() {
         serviceLocator(),
       ),
     )
+    ..registerLazySingleton(
+      () => ClearLocalBlogs(
+        serviceLocator(),
+      ),
+    )
 
     // Blog Bloc
     ..registerLazySingleton(
       () => BlogBloc(
         uploadBlog: serviceLocator(),
         fetchBlogs: serviceLocator(),
+        appUserCubit: serviceLocator(),
+        clearLocalBlogs: serviceLocator(),
       ),
     );
 }

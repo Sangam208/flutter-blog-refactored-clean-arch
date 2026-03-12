@@ -42,46 +42,51 @@ class _SignupState extends State<Signup> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Center(
-            child: Card(
-              color: Theme.of(context).colorScheme.primary,
-              elevation: 8,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Container(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height *
-                      0.8, // Adjust height dynamically
-                ),
-
-                width: containerWidth,
-                padding: const EdgeInsets.all(14.0), // Uniform padding
-                child: SingleChildScrollView(
-                  child: Column(
-                    // Change from fixed height to flexible height
-                    mainAxisSize: MainAxisSize
-                        .min, // Allows it to shrink or expand based on content
-                    children: <Widget>[
-                      Center(
-                        child: Text(
-                          'Sign Up',
-                          style: Theme.of(context).textTheme.titleMedium,
+        body: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is AuthFailure) {
+              showToast(state.message);
+            } else if (state is AuthSuccess) {
+              if (!context.mounted) return;
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            }
+          },
+          builder: (context, state) {
+            return state is AuthLoading
+                ? Loader()
+                : Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Center(
+                      child: Card(
+                        color: Theme.of(context).colorScheme.primary,
+                        elevation: 8,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ),
-                      SizedBox(height: 20),
-                      BlocConsumer<AuthBloc, AuthState>(
-                        listener: (context, state) {
-                          if (state is AuthFailure) {
-                            showToast(state.message);
-                          }
-                        },
-                        builder: (context, state) {
-                          return state is AuthLoading
-                              ? Loader()
-                              : Form(
+                        child: Container(
+                          constraints: BoxConstraints(
+                            maxHeight: MediaQuery.of(context).size.height *
+                                0.8, // Adjust height dynamically
+                          ),
+
+                          width: containerWidth,
+                          padding:
+                              const EdgeInsets.all(14.0), // Uniform padding
+                          child: SingleChildScrollView(
+                            child: Column(
+                              // Change from fixed height to flexible height
+                              mainAxisSize: MainAxisSize
+                                  .min, // Allows it to shrink or expand based on content
+                              children: <Widget>[
+                                Center(
+                                  child: Text(
+                                    'Sign Up',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+                                Form(
                                   key: _signupkey,
                                   child: Column(
                                     children: [
@@ -179,12 +184,6 @@ class _SignupState extends State<Signup> {
                                                             .trim(),
                                                   ),
                                                 );
-                                            Navigator.of(context)
-                                                .pushReplacement(
-                                                    MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const Login(),
-                                            ));
                                           }
                                         },
                                       ),
@@ -259,15 +258,15 @@ class _SignupState extends State<Signup> {
                                               10), // Add some space at the bottom for better balance
                                     ],
                                   ),
-                                );
-                        },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
+                    ),
+                  );
+          },
         ),
       ),
     );

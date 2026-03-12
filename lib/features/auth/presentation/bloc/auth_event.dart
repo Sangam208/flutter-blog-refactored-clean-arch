@@ -19,3 +19,5 @@ final class AuthLogin extends AuthEvent {
 }
 
 final class AuthCurrentUser extends AuthEvent {}
+
+final class AuthLogout extends AuthEvent {}

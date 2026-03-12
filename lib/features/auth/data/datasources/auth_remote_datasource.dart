@@ -17,11 +17,13 @@ abstract interface class AuthRemoteDatasource {
   });
 
   Future<UserModel?> getCurrentUserData();
+
+  Future<void> logOut();
 }
 
 class AuthRemoteDataSourceImplementation implements AuthRemoteDatasource {
-  final SupabaseClient supabaseClient;
-  AuthRemoteDataSourceImplementation(this.supabaseClient);
+  final SupabaseClient _supabaseClient;
+  AuthRemoteDataSourceImplementation(this._supabaseClient);
   @override
   Future<UserModel> signUpWithEmailPassword({
     required String name,
@@ -29,12 +31,14 @@ class AuthRemoteDataSourceImplementation implements AuthRemoteDatasource {
     required String password,
   }) async {
     try {
-      final response = await supabaseClient.auth
+      final response = await _supabaseClient.auth
           .signUp(email: email, password: password, data: {
         'name': name,
       });
       if (response.user == null) throw ServerExceptions('User Is Null');
       return UserModel.fromJson(response.user!.toJson());
+    } on AuthException catch (e) {
+      throw ServerExceptions(e.message);
     } catch (e) {
       throw ServerExceptions(e.toString());
     }
@@ -46,25 +50,27 @@ class AuthRemoteDataSourceImplementation implements AuthRemoteDatasource {
     required String password,
   }) async {
     try {
-      final response = await supabaseClient.auth.signInWithPassword(
+      final response = await _supabaseClient.auth.signInWithPassword(
         email: email,
         password: password,
       );
       if (response.user == null) throw ServerExceptions('User Is Null');
       return UserModel.fromJson(response.user!.toJson());
+    } on AuthException catch (e) {
+      throw ServerExceptions(e.message);
     } catch (e) {
       throw ServerExceptions(e.toString());
     }
   }
 
   @override
-  Session? get currentUserSession => supabaseClient.auth.currentSession;
+  Session? get currentUserSession => _supabaseClient.auth.currentSession;
 
   @override
   Future<UserModel?> getCurrentUserData() async {
     try {
       if (currentUserSession != null) {
-        final userData = await supabaseClient
+        final userData = await _supabaseClient
             .from('profiles')
             .select()
             .eq('id', currentUserSession!.user.id);
@@ -75,5 +81,10 @@ class AuthRemoteDataSourceImplementation implements AuthRemoteDatasource {
     } catch (e) {
       throw ServerExceptions(e.toString());
     }
+  }
+
+  @override
+  Future<void> logOut() async {
+    await _supabaseClient.auth.signOut();
   }
 }
