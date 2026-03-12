@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app/core/theme/app_palette.dart';
 import 'package:my_app/core/utils/calculate_reading_time.dart';
+import 'package:my_app/features/blog/presentation/pages/preview_image.dart';
 
 class BlogView extends StatelessWidget {
   final String title;
@@ -46,11 +47,18 @@ class BlogView extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadiusGeometry.circular(12.0),
-                child: CachedNetworkImage(
-                  width: double.infinity,
-                  height: 300,
-                  imageUrl: imageUrl,
-                  fit: BoxFit.cover,
+                child: GestureDetector(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PreviewImage(imageUrl: imageUrl),
+                      )),
+                  child: CachedNetworkImage(
+                    width: double.infinity,
+                    height: 300,
+                    imageUrl: imageUrl,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               const SizedBox(

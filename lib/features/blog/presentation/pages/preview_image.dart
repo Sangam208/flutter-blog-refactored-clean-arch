@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
-class PreviewImage extends StatefulWidget {
+class PreviewImage extends StatelessWidget {
   final String imageUrl;
   const PreviewImage({super.key, required this.imageUrl});
 
-  @override
-  State<PreviewImage> createState() => _PreviewImageState();
-}
-
-class _PreviewImageState extends State<PreviewImage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +15,7 @@ class _PreviewImageState extends State<PreviewImage> {
         ),
       ),
       body: PhotoView(
-        imageProvider: NetworkImage(widget.imageUrl),
+        imageProvider: NetworkImage(imageUrl),
         minScale: PhotoViewComputedScale.contained, // minimum zoom scale
         maxScale: PhotoViewComputedScale.covered, // maximum zoom scale
         backgroundDecoration: BoxDecoration(
