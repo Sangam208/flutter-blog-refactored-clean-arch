@@ -2,3 +2,8 @@
 *.html linguist-vendored
 *.js linguist-vendored
 *.css linguist-vendored
+android/app/.cxx/** linguist-generated=true
+linux/flutter/** linguist-generated=true
+linux/runner/** linguist-vendored
+windows/flutter/** linguist-generated=true
+windows/runner/** linguist-vendored
