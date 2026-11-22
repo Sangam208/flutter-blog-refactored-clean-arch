@@ -6,6 +6,8 @@ abstract interface class BlogLocalDatasource {
 
   List<BlogModel> loadBlogs();
 
+  Future<void> removeLocalBlog({required String blogId});
+
   Future<void> clearLocalBlogs();
 }
 
@@ -25,10 +27,24 @@ class BlogLocalDatasourceImplementation implements BlogLocalDatasource {
   }
 
   @override
+  Future<void> removeLocalBlog({required String blogId}) async {
+    final remainingBlogs = loadBlogs()
+        .where((blog) => blog.id != blogId)
+        .toList();
+    await _box.clear();
+    for (var i = 0; i < remainingBlogs.length; i++) {
+      await _box.put(
+        i.toString(),
+        remainingBlogs[i].toJson(includeUsername: true),
+      );
+    }
+  }
+
+  @override
   void uploadLocalBlogs({required List<BlogModel> blogs}) {
     _box.clear();
     for (var i = 0; i < blogs.length; i++) {
-      _box.put(i.toString(), blogs[i].toJson());
+      _box.put(i.toString(), blogs[i].toJson(includeUsername: true));
     }
   }
 

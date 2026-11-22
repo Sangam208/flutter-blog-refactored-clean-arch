@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:my_app/core/theme/app_palette.dart';
-import 'package:my_app/core/utils/calculate_reading_time.dart';
+import 'package:my_app/core/utils/format_relative_time.dart';
 
 class BlogCard extends StatelessWidget {
   final String username;
@@ -9,6 +9,7 @@ class BlogCard extends StatelessWidget {
   final String title;
   final String content;
   final int index;
+  final DateTime updatedAt;
   const BlogCard({
     super.key,
     required this.username,
@@ -16,6 +17,7 @@ class BlogCard extends StatelessWidget {
     required this.title,
     required this.content,
     required this.index,
+    required this.updatedAt,
   });
 
   @override
@@ -25,13 +27,10 @@ class BlogCard extends StatelessWidget {
       color: index % 3 == 0
           ? AppPalette.appColor1
           : index % 3 == 1
-              ? AppPalette.appColor2
-              : AppPalette.appColor3,
+          ? AppPalette.appColor2
+          : AppPalette.appColor3,
       child: Padding(
-        padding: const EdgeInsets.all(10.0).copyWith(
-          top: 3.0,
-          bottom: 3.0,
-        ),
+        padding: const EdgeInsets.all(10.0).copyWith(top: 3.0, bottom: 3.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 3.0,
@@ -40,14 +39,12 @@ class BlogCard extends StatelessWidget {
               children: [
                 Text(
                   username,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
+                  style: Theme.of(context).textTheme.bodyMedium!
                       .copyWith(color: Colors.blue.shade100),
                 ),
                 const Spacer(),
                 Text(
-                  '• ${calculateReadingTime(content)} min',
+                  '• ${formatRelativeTime(updatedAt)}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
@@ -74,9 +71,7 @@ class BlogCard extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium!
+                        style: Theme.of(context).textTheme.titleMedium!
                             .copyWith(fontSize: 28),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -91,7 +86,7 @@ class BlogCard extends StatelessWidget {
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),

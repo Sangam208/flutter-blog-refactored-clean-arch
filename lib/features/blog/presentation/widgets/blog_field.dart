@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class BlogField extends StatelessWidget {
   final String label;
@@ -29,11 +29,13 @@ class BlogField extends StatelessWidget {
         errorBorder: customBorder(),
         filled: true,
         fillColor: const Color.fromARGB(255, 198, 198, 198),
-        border: customBorder()
-            .copyWith(borderSide: BorderSide(color: Colors.grey.shade700)),
+        border: customBorder().copyWith(
+          borderSide: BorderSide(color: Colors.grey.shade700),
+        ),
         enabledBorder: customBorder(),
-        focusedBorder: customBorder()
-            .copyWith(borderSide: BorderSide(color: Colors.grey.shade700)),
+        focusedBorder: customBorder().copyWith(
+          borderSide: BorderSide(color: Colors.grey.shade700),
+        ),
         labelText: label,
       ),
     );

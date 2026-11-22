@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:my_app/core/network/connection_checker.dart';
 import 'package:my_app/features/blog/data/datasources/blog_local_datasource.dart';
 import 'package:uuid/uuid.dart';
@@ -44,7 +45,9 @@ class BlogRepositoryImplementation implements BlogRepository {
       );
 
       final imageUrl = await _blogRemoteDatasource.uploadBlogImage(
-          image: image, blog: blogModel);
+        image: image,
+        blog: blogModel,
+      );
 
       blogModel = blogModel.copyWith(imageUrl: imageUrl);
 
@@ -53,6 +56,8 @@ class BlogRepositoryImplementation implements BlogRepository {
       return right(blog);
     } on ServerExceptions catch (e) {
       return left(Failure(e.message));
+    } catch (_) {
+      return left(Failure('Could not publish your post. Please try again.'));
     }
   }
 
@@ -72,6 +77,25 @@ class BlogRepositoryImplementation implements BlogRepository {
       return right(blogs);
     } on ServerExceptions catch (e) {
       return left(Failure(e.message));
+    } catch (_) {
+      return left(Failure('Could not load posts. Please try again.'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteBlog({required String blogId}) async {
+    try {
+      if (!await _connectionChecker.isConnected) {
+        return left(Failure('No Internet Connection'));
+      }
+
+      await _blogRemoteDatasource.deleteBlog(blogId: blogId);
+      await _blogLocalDatasource.removeLocalBlog(blogId: blogId);
+      return right(null);
+    } on ServerExceptions catch (e) {
+      return left(Failure(e.message));
+    } catch (_) {
+      return left(Failure('Could not delete this post. Please try again.'));
     }
   }
 

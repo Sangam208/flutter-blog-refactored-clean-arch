@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_app/core/common/widgets/app_drawer.dart';
 import 'package:my_app/core/common/widgets/loader.dart';
@@ -10,9 +10,7 @@ import 'package:my_app/features/blog/presentation/pages/blog_view.dart';
 import 'package:my_app/features/blog/presentation/widgets/blog_card.dart';
 
 class Home extends StatefulWidget {
-  static route() => MaterialPageRoute(
-        builder: (context) => const Home(),
-      );
+  static route() => MaterialPageRoute(builder: (context) => const Home());
   const Home({super.key});
 
   @override
@@ -35,28 +33,27 @@ class _HomeState extends State<Home> {
         backgroundColor: const Color.fromARGB(255, 240, 160, 160),
         title: Text(
           'Discover',
-          style: Theme.of(context)
-              .textTheme
-              .titleMedium
+          style: Theme.of(context).textTheme.titleMedium
               ?.copyWith(color: const Color.fromARGB(255, 145, 51, 51)),
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Builder(builder: (context) {
-              return IconButton(
-                onPressed: Scaffold.of(context).openEndDrawer,
-                icon: Icon(Icons.menu),
-              );
-            }),
+            child: Builder(
+              builder: (context) {
+                return IconButton(
+                  onPressed: Scaffold.of(context).openEndDrawer,
+                  icon: Icon(Icons.menu),
+                );
+              },
+            ),
           ),
         ],
         leading: IconButton(
           onPressed: () {
             // Add A New Blog
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const AddBlog(),
-            ));
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => const AddBlog()));
           },
           icon: const Icon(Icons.add),
           iconSize: 32,
@@ -102,18 +99,24 @@ class _HomeState extends State<Home> {
                                       content: blog.content,
                                       imageUrl: blog.imageUrl,
                                       username: blog.username ?? 'Unknown',
-                                      updatedAt:
-                                          formatDateByddMMYYYY(blog.updatedAt),
+                                      updatedAt: formatDateByddMMYYYY(
+                                        blog.updatedAt,
+                                      ),
                                     ),
                                   ),
                                 );
                               },
+                              onLongPress: () => _confirmDeleteBlog(
+                                context,
+                                blog.id,
+                              ),
                               child: BlogCard(
                                 username: blog.username ?? 'Unknown',
                                 imageUrl: blog.imageUrl,
                                 title: blog.title,
                                 content: blog.content,
                                 index: index,
+                                updatedAt: blog.updatedAt,
                               ),
                             ),
                           ),
@@ -127,5 +130,27 @@ class _HomeState extends State<Home> {
       ),
       endDrawer: AppDrawer(),
     );
+  }
+
+  Future<void> _confirmDeleteBlog(BuildContext context, String blogId) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete blog?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
+    );
+
+    if (!context.mounted || shouldDelete != true) return;
+    context.read<BlogBloc>().add(BlogDeleteRequested(blogId: blogId));
   }
 }

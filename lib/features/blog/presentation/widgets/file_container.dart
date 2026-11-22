@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+
+import 'package:material_ui/material_ui.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:my_app/core/utils/pick_file.dart';
 
@@ -29,10 +30,7 @@ class FileContainer extends StatelessWidget {
               child: SizedBox(
                 width: double.infinity,
                 height: 150,
-                child: Image.file(
-                  file!,
-                  fit: BoxFit.cover,
-                ),
+                child: Image.file(file!, fit: BoxFit.cover),
               ),
             )
           : DottedBorder(
@@ -49,16 +47,12 @@ class FileContainer extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.camera_alt,
-                      size: 40,
-                    ),
+                    const Icon(Icons.camera_alt, size: 40),
                     const SizedBox(height: 5),
                     Text(
                       "Upload a file",
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.black54,
-                          ),
+                      style: Theme.of(context).textTheme.bodyMedium
+                          ?.copyWith(color: Colors.black54),
                     ),
                   ],
                 ),

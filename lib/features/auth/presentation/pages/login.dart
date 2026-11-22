@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_app/core/common/widgets/loader.dart';
 import 'package:my_app/core/utils/show_toast.dart';
@@ -8,9 +8,7 @@ import 'package:my_app/features/auth/presentation/widgets/auth_field.dart';
 import 'package:my_app/features/auth/presentation/pages/signup.dart';
 
 class Login extends StatefulWidget {
-  static route() => MaterialPageRoute(
-        builder: (context) => const Login(),
-      );
+  static route() => MaterialPageRoute(builder: (context) => const Login());
   const Login({super.key});
 
   @override
@@ -67,8 +65,9 @@ class _LoginState extends State<Login> {
                               Center(
                                 child: Text(
                                   'Log In',
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium,
                                 ),
                               ),
                               SizedBox(height: 20),
@@ -78,27 +77,29 @@ class _LoginState extends State<Login> {
                                   children: [
                                     // Email
                                     AuthField(
-                                        hintText: 'Email',
-                                        fieldController: _emailController,
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter your email';
-                                          }
-                                          return null;
-                                        }),
+                                      hintText: 'Email',
+                                      fieldController: _emailController,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter your email';
+                                        }
+                                        return null;
+                                      },
+                                    ),
                                     SizedBox(height: 16),
 
                                     // Password
                                     AuthField(
-                                        isObscureText: true,
-                                        hintText: 'Password',
-                                        fieldController: _passwordController,
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter your password';
-                                          }
-                                          return null;
-                                        }),
+                                      isObscureText: true,
+                                      hintText: 'Password',
+                                      fieldController: _passwordController,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter your password';
+                                        }
+                                        return null;
+                                      },
+                                    ),
                                     SizedBox(height: 20),
 
                                     // Log In Button
@@ -108,14 +109,13 @@ class _LoginState extends State<Login> {
                                         if (_loginkey.currentState!
                                             .validate()) {
                                           context.read<AuthBloc>().add(
-                                                AuthLogin(
-                                                  email: _emailController.text
-                                                      .trim(),
-                                                  password: _passwordController
-                                                      .text
-                                                      .trim(),
-                                                ),
-                                              );
+                                            AuthLogin(
+                                              email: _emailController.text
+                                                  .trim(),
+                                              password: _passwordController.text
+                                                  .trim(),
+                                            ),
+                                          );
                                         }
                                       },
                                     ),
@@ -130,10 +130,9 @@ class _LoginState extends State<Login> {
                                       style: TextButton.styleFrom(
                                         padding: EdgeInsets
                                             .zero, // Remove default padding
-                                        minimumSize: Size
-                                            .zero, // Remove minimum size constraints
-                                        tapTargetSize: MaterialTapTargetSize
-                                            .shrinkWrap, // Shrink tap target size
+                                        minimumSize: Size.zero, // Remove minimum size constraints
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap, // Shrink tap target size
                                         foregroundColor: Theme.of(context)
                                             .textTheme
                                             .bodySmall
@@ -154,33 +153,32 @@ class _LoginState extends State<Login> {
                                         child: Text(
                                           'Create a new account',
                                           style: _isHovered
-                                              ? Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall
-                                                  ?.copyWith(
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              255,
-                                                              206,
-                                                              115,
-                                                              85),
-                                                      decoration: TextDecoration
-                                                          .underline,
-                                                      decorationColor:
-                                                          const Color.fromARGB(
-                                                              255,
-                                                              206,
-                                                              115,
-                                                              85))
+                                              ? Theme.of(
+                                                  context,
+                                                ).textTheme.bodySmall?.copyWith(
+                                                  color: const Color.fromARGB(
+                                                    255,
+                                                    206,
+                                                    115,
+                                                    85,
+                                                  ),
+                                                  decoration:
+                                                      TextDecoration.underline,
+                                                  decorationColor:
+                                                      const Color.fromARGB(
+                                                        255,
+                                                        206,
+                                                        115,
+                                                        85,
+                                                      ),
+                                                )
                                               : Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall,
+                                                    .textTheme
+                                                    .bodySmall,
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
-                                        height:
-                                            10), // Add some space at the bottom for better balance
+                                    SizedBox(height: 10), // Add some space at the bottom for better balance
                                   ],
                                 ),
                               ),

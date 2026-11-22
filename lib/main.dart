@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -19,15 +19,9 @@ void main() async {
       enabled: kReleaseMode,
       builder: (context) => MultiBlocProvider(
         providers: [
-          BlocProvider(
-            create: (_) => serviceLocator<AppUserCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => serviceLocator<AuthBloc>(),
-          ),
-          BlocProvider(
-            create: (_) => serviceLocator<BlogBloc>(),
-          ),
+          BlocProvider(create: (_) => serviceLocator<AppUserCubit>()),
+          BlocProvider(create: (_) => serviceLocator<AuthBloc>()),
+          BlocProvider(create: (_) => serviceLocator<BlogBloc>()),
         ],
         child: const MyApp(),
       ),
@@ -83,10 +77,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(
-          hintStyle: TextStyle(
-            fontFamily: 'Lato',
-            color: Colors.black87,
-          ),
+          hintStyle: TextStyle(fontFamily: 'Lato', color: Colors.black87),
         ),
       ),
       home: BlocSelector<AppUserCubit, AppUserState, bool>(

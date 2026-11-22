@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_app/core/cubits/app_user/app_user_cubit.dart';
 
@@ -22,16 +22,6 @@ class AppDrawer extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-          ListTile(
-            leading: Icon(Icons.person),
-            title: Text("Profile"),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: Icon(Icons.settings),
-            title: Text("Settings"),
-            onTap: () {},
           ),
           ListTile(
             leading: Icon(Icons.logout),

@@ -31,16 +31,28 @@ class AuthRemoteDataSourceImplementation implements AuthRemoteDatasource {
     required String password,
   }) async {
     try {
-      final response = await _supabaseClient.auth
-          .signUp(email: email, password: password, data: {
-        'name': name,
-      });
-      if (response.user == null) throw ServerExceptions('User Is Null');
+      final response = await _supabaseClient.auth.signUp(
+        email: email,
+        password: password,
+        data: {'name': name},
+      );
+      if (response.user == null) {
+        throw ServerExceptions(
+          'missing signup user',
+          fallback: 'Could not create your account. Please try again.',
+        );
+      }
       return UserModel.fromJson(response.user!.toJson());
     } on AuthException catch (e) {
-      throw ServerExceptions(e.message);
+      throw ServerExceptions(
+        e.message,
+        fallback: 'Could not create your account. Please try again.',
+      );
     } catch (e) {
-      throw ServerExceptions(e.toString());
+      throw ServerExceptions(
+        e.toString(),
+        fallback: 'Could not create your account. Please try again.',
+      );
     }
   }
 
@@ -54,12 +66,24 @@ class AuthRemoteDataSourceImplementation implements AuthRemoteDatasource {
         email: email,
         password: password,
       );
-      if (response.user == null) throw ServerExceptions('User Is Null');
+      if (response.user == null) {
+        throw ServerExceptions(
+          'missing login user',
+          fallback:
+              'Could not log in. Please check your details and try again.',
+        );
+      }
       return UserModel.fromJson(response.user!.toJson());
     } on AuthException catch (e) {
-      throw ServerExceptions(e.message);
+      throw ServerExceptions(
+        e.message,
+        fallback: 'Could not log in. Please check your details and try again.',
+      );
     } catch (e) {
-      throw ServerExceptions(e.toString());
+      throw ServerExceptions(
+        e.toString(),
+        fallback: 'Could not log in. Please try again.',
+      );
     }
   }
 
@@ -79,12 +103,27 @@ class AuthRemoteDataSourceImplementation implements AuthRemoteDatasource {
       }
       return null;
     } catch (e) {
-      throw ServerExceptions(e.toString());
+      throw ServerExceptions(
+        e.toString(),
+        fallback: 'Could not load your profile. Please sign in again.',
+      );
     }
   }
 
   @override
   Future<void> logOut() async {
-    await _supabaseClient.auth.signOut();
+    try {
+      await _supabaseClient.auth.signOut();
+    } on AuthException catch (e) {
+      throw ServerExceptions(
+        e.message,
+        fallback: 'Could not log out. Please try again.',
+      );
+    } catch (e) {
+      throw ServerExceptions(
+        e.toString(),
+        fallback: 'Could not log out. Please try again.',
+      );
+    }
   }
 }

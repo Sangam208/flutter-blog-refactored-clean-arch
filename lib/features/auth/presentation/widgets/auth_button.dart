@@ -1,10 +1,13 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AuthButton extends StatelessWidget {
   final String buttonText;
   final VoidCallback onPressed;
-  const AuthButton(
-      {super.key, required this.buttonText, required this.onPressed});
+  const AuthButton({
+    super.key,
+    required this.buttonText,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +19,7 @@ class AuthButton extends StatelessWidget {
         minimumSize: Size(double.infinity, 50),
         backgroundColor: const Color.fromARGB(255, 46, 151, 49),
       ),
-      child: Text(
-        buttonText,
-        style: Theme.of(context).textTheme.bodyMedium,
-      ),
+      child: Text(buttonText, style: Theme.of(context).textTheme.bodyMedium),
     );
   }
 }

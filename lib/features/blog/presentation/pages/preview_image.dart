@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:photo_view/photo_view.dart';
 
 class PreviewImage extends StatelessWidget {
@@ -9,10 +9,7 @@ class PreviewImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Preview',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        title: Text('Preview', style: Theme.of(context).textTheme.titleLarge),
       ),
       body: PhotoView(
         imageProvider: NetworkImage(imageUrl),

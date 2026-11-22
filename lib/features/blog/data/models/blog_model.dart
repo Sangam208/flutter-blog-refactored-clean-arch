@@ -11,16 +11,23 @@ class BlogModel extends Blog {
     super.username,
   });
 
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
+  Map<String, dynamic> toJson({bool includeUsername = false}) {
+    final json = <String, dynamic>{
       'id': id,
       'user_id': userId,
       'title': title,
       'content': content,
       'image_url': imageUrl,
       'updated_at': updatedAt.toIso8601String(),
-      'username': username,
     };
+
+    // Username is joined from profiles and is not a column on the blogs table.
+    // Keep it in the local cache so offline cards can still display the author.
+    if (includeUsername && username != null) {
+      json['username'] = username;
+    }
+
+    return json;
   }
 
   factory BlogModel.fromJson(Map<String, dynamic> map) {

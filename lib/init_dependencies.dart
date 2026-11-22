@@ -17,6 +17,7 @@ import 'package:my_app/features/blog/data/datasources/blog_remote_datasource.dar
 import 'package:my_app/features/blog/data/repositories/blog_repository_implementation.dart';
 import 'package:my_app/features/blog/domain/repositories/blog_repository.dart';
 import 'package:my_app/features/blog/domain/usecases/clear_local_blogs.dart';
+import 'package:my_app/features/blog/domain/usecases/delete_blog.dart';
 import 'package:my_app/features/blog/domain/usecases/fetch_blogs.dart';
 import 'package:my_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:my_app/features/blog/presentation/bloc/blog_bloc.dart';
@@ -160,6 +161,11 @@ void _initBlog() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => DeleteBlog(
+        serviceLocator(),
+      ),
+    )
     ..registerLazySingleton(
       () => ClearLocalBlogs(
         serviceLocator(),
@@ -171,6 +177,7 @@ void _initBlog() {
       () => BlogBloc(
         uploadBlog: serviceLocator(),
         fetchBlogs: serviceLocator(),
+        deleteBlog: serviceLocator(),
         appUserCubit: serviceLocator(),
         clearLocalBlogs: serviceLocator(),
       ),

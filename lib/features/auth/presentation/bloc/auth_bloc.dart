@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:my_app/core/cubits/app_user/app_user_cubit.dart';
 import 'package:my_app/core/network/connection_checker.dart';
 import 'package:my_app/core/usecase/usecase.dart';
@@ -25,22 +25,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   late final StreamSubscription<void> _logoutSubscription;
 
   AuthBloc({
-    required UserSignup userSignup,
-    required UserLogin userLogin,
-    required CurrentUser currentUser,
-    required AppUserCubit appUserCubit,
-    required UserLogout userLogout,
-    required ConnectionChecker connectionChecker,
-  })  : _userSignup = userSignup,
-        _userLogin = userLogin,
-        _currentUser = currentUser,
-        _appUserCubit = appUserCubit,
-        _userLogout = userLogout,
-        _connectionChecker = connectionChecker,
-        super(AuthInitial()) {
-    on<AuthEvent>(
-      (_, emit) => emit(AuthLoading()),
-    );
+    required this._userSignup,
+    required this._userLogin,
+    required this._currentUser,
+    required this._appUserCubit,
+    required this._userLogout,
+    required this._connectionChecker,
+  }) : super(AuthInitial()) {
+    on<AuthEvent>((_, emit) => emit(AuthLoading()));
     on<AuthSignUp>(_onAuthSignup);
     on<AuthLogin>(_onAuthLogin);
     on<AuthCurrentUser>(_isUserLoggedIn);
@@ -59,8 +51,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   // AuthSignUp Implementation
   void _onAuthSignup(AuthSignUp event, Emitter<AuthState> emit) async {
-    final res = await _userSignup(UserSignUpParams(
-        name: event.name, email: event.email, password: event.password));
+    final res = await _userSignup(
+      UserSignUpParams(
+        name: event.name,
+        email: event.email,
+        password: event.password,
+      ),
+    );
     res.fold(
       (l) => emit(AuthFailure(l.message)),
       (r) => _emitAuthSuccess(r, emit),
@@ -70,7 +67,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   // AuthLogin Implementation
   void _onAuthLogin(AuthLogin event, Emitter<AuthState> emit) async {
     final res = await _userLogin(
-        UserLoginParams(email: event.email, password: event.password));
+      UserLoginParams(email: event.email, password: event.password),
+    );
     res.fold(
       (l) => emit(AuthFailure(l.message)),
       (r) => _emitAuthSuccess(r, emit),
@@ -83,20 +81,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthFailure('No Internet Connection'));
     }
     final res = await _userLogout(NoParams());
-    res.fold(
-      (l) => emit(AuthFailure(l.message)),
-      (r) {
-        _appUserCubit.updateUserStatus(null);
-        emit(AuthInitial());
-      },
-    );
+    res.fold((l) => emit(AuthFailure(l.message)), (r) {
+      _appUserCubit.updateUserStatus(null);
+      emit(AuthInitial());
+    });
   }
 
   // Current User Implementation
-  void _isUserLoggedIn(
-    AuthCurrentUser event,
-    Emitter<AuthState> emit,
-  ) async {
+  void _isUserLoggedIn(AuthCurrentUser event, Emitter<AuthState> emit) async {
     final res = await _currentUser(NoParams());
     res.fold(
       (l) => emit(AuthFailure(l.message)),

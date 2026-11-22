@@ -11,7 +11,9 @@ class AuthRepositoryImplementation implements AuthRepository {
   final AuthRemoteDatasource _authRemoteDatasource;
   final ConnectionChecker _connectionChecker;
   AuthRepositoryImplementation(
-      this._authRemoteDatasource, this._connectionChecker);
+    this._authRemoteDatasource,
+    this._connectionChecker,
+  );
 
   @override
   Future<Either<Failure, User>> currentUser() async {
@@ -36,24 +38,36 @@ class AuthRepositoryImplementation implements AuthRepository {
       return right(user);
     } on ServerExceptions catch (e) {
       return left(Failure(e.message));
+    } catch (_) {
+      return left(Failure('Could not check your session. Please try again.'));
     }
   }
 
   @override
-  Future<Either<Failure, User>> logInWithEmailPassword(
-      {required String email, required String password}) async {
-    return _getUser(() async => await _authRemoteDatasource
-        .logInWithEmailPassword(email: email, password: password));
+  Future<Either<Failure, User>> logInWithEmailPassword({
+    required String email,
+    required String password,
+  }) async {
+    return _getUser(
+      () async => await _authRemoteDatasource.logInWithEmailPassword(
+        email: email,
+        password: password,
+      ),
+    );
   }
 
   @override
-  Future<Either<Failure, User>> signUpWithEmailPassword(
-      {required String name,
-      required String email,
-      required String password}) async {
+  Future<Either<Failure, User>> signUpWithEmailPassword({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
     return _getUser(
       () async => await _authRemoteDatasource.signUpWithEmailPassword(
-          name: name, email: email, password: password),
+        name: name,
+        email: email,
+        password: password,
+      ),
     );
   }
 
@@ -63,6 +77,10 @@ class AuthRepositoryImplementation implements AuthRepository {
       return right(user);
     } on ServerExceptions catch (e) {
       return left(Failure(e.message));
+    } catch (_) {
+      return left(
+        Failure('Could not complete authentication. Please try again.'),
+      );
     }
   }
 
@@ -76,6 +94,8 @@ class AuthRepositoryImplementation implements AuthRepository {
       return right(null);
     } on ServerExceptions catch (e) {
       return left(Failure(e.message));
+    } catch (_) {
+      return left(Failure('Could not log out. Please try again.'));
     }
   }
 }

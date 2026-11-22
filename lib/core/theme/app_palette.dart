@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AppPalette {
   static Color appColor1 = const Color.fromARGB(255, 255, 68, 55);

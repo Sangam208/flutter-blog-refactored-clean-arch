@@ -1,8 +1,10 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_app/core/common/widgets/loader.dart';
 import 'package:my_app/core/cubits/app_user/app_user_cubit.dart';
+import 'package:my_app/core/utils/pick_file.dart';
 import 'package:my_app/core/utils/show_toast.dart';
 import 'package:my_app/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:my_app/features/blog/presentation/widgets/blog_field.dart';
@@ -23,6 +25,19 @@ class _AddBlogState extends State<AddBlog> {
   File? selectedImage;
 
   @override
+  void initState() {
+    super.initState();
+    _restoreImageAfterActivityRestart();
+  }
+
+  Future<void> _restoreImageAfterActivityRestart() async {
+    final image = await retrieveLostImage();
+    if (image != null && mounted) {
+      setState(() => selectedImage = image);
+    }
+  }
+
+  @override
   void dispose() {
     _titleController.dispose();
     _contentController.dispose();
@@ -34,13 +49,13 @@ class _AddBlogState extends State<AddBlog> {
       final userId =
           (context.read<AppUserCubit>().state as AppUserLoggedIn).user.id;
       context.read<BlogBloc>().add(
-            BlogUploadRequested(
-              userId: userId,
-              title: _titleController.text.trim(),
-              content: _contentController.text.trim(),
-              image: selectedImage!,
-            ),
-          );
+        BlogUploadRequested(
+          userId: userId,
+          title: _titleController.text.trim(),
+          content: _contentController.text.trim(),
+          image: selectedImage!,
+        ),
+      );
     }
   }
 
@@ -62,9 +77,7 @@ class _AddBlogState extends State<AddBlog> {
           ),
           title: Text(
             'Create a post',
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
+            style: Theme.of(context).textTheme.titleMedium
                 ?.copyWith(color: Colors.black),
           ),
           actions: [

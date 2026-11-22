@@ -1,16 +1,17 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AuthField extends StatelessWidget {
   final String hintText;
   final TextEditingController fieldController;
   final FormFieldValidator validator;
   final bool isObscureText;
-  const AuthField(
-      {super.key,
-      required this.hintText,
-      required this.fieldController,
-      required this.validator,
-      this.isObscureText = false});
+  const AuthField({
+    super.key,
+    required this.hintText,
+    required this.fieldController,
+    required this.validator,
+    this.isObscureText = false,
+  });
 
   @override
   Widget build(BuildContext context) {
