@@ -1,0 +1,4 @@
+*.dart linguist-detectable=true
+*.html linguist-vendored
+*.js linguist-vendored
+*.css linguist-vendored

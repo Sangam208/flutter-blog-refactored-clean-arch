@@ -12,8 +12,6 @@ A Flutter app for signing in, sharing image-backed blog posts, and browsing post
 - Browse the cached feed while offline.
 - Log out from the navigation drawer.
 
-Post editing is not currently available.
-
 ## Screenshots
 
 | Log in | Sign up | Discover feed |
